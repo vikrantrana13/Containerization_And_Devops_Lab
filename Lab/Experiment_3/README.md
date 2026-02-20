@@ -58,7 +58,7 @@ To deploy and analyze NGINX using different Docker base images (official, Ubuntu
 ```bash
 docker pull nginx:latest
 ```
-![pull](images-1.png)
+![pull](images/images-1.png)
 
 - Understanding the output
 
@@ -79,15 +79,15 @@ The tag (version). If you don’t specify a tag, Docker assumes latest.
 docker run -d --name nginx-official -p 8080:80 nginx
 ```
 
-![run](images-2.png)
+![run](images/images-2.png)
 
 ### 3. Verify Running Containers 
 
 ```bash 
 curl http://localhost:8080
 ```
-![verify](images-3.png)
-![web](images-4.png)
+![verify](images/images-3.png)
+![web](images/images-4.png)
 
 - HTML code visible hence verified
 
@@ -100,7 +100,7 @@ docker images nginx
 - Minimal configuration required  
 - Uses Debian-based OS internally  
 
-![key](images-5.png)
+![key](images/images-5.png)
 
 ## Part 2: Custom NGINX Using Ubuntu Base Image
 
@@ -117,7 +117,7 @@ docker images nginx
 mkdir nginx-ubuntu
 cd nginx-ubuntu
 ```
-![key](images-6.png)
+![key](images/images-6.png)
 
 ### 2. Create Docker File 
 
@@ -125,7 +125,7 @@ cd nginx-ubuntu
 ```bash
 nano Dockerfile
 ```
-![nano](images-7.png)
+![nano](images/images-7.png)
 
 
 - Paste the following : 
@@ -149,7 +149,7 @@ CMD ["nginx", "-g", "daemon off;"]
 ```bash
 cat Dockerfile
 ```
-![cat](images-8.png)
+![cat](images/images-8.png)
 
 
 ### 3. Build the Image
@@ -157,7 +157,7 @@ cat Dockerfile
 ```bash
 docker build -t nginx-ubuntu .
 ```
-![build](images-9.png)
+![build](images/images-9.png)
 
 ### 4. Run Container 
 
@@ -165,7 +165,7 @@ docker build -t nginx-ubuntu .
 docker run -d --name nginx-ubuntu -p 8081:80 nginx-ubuntu
 ```
 
-![runing](images-10.png)
+![runing](images/images-10.png)
 
 
 ## KEY OBSERVATIONS
@@ -174,7 +174,7 @@ docker run -d --name nginx-ubuntu -p 8081:80 nginx-ubuntu
 ```bash
 docker images | grep nginx
 ```
-![size](images-11.png)
+![size](images/images-11.png)
 
 **IMAGE SIZE COMPARISON**
 - nginx (official) : Larger
@@ -196,7 +196,7 @@ cd ~
 mkdir nginx-alpine
 cd nginx-alpine
 ```
-![key](images-12.png)
+![key](images/images-12.png)
 
 ### 2. Create Docker File 
 
@@ -204,7 +204,7 @@ cd nginx-alpine
 ```bash
 nano Dockerfile
 ```
-![nano](images-13.png)
+![nano](images/images-13.png)
 
 
 - Paste the following : 
@@ -229,7 +229,7 @@ CMD ["nginx", "-g", "daemon off;"]
 ```bash
 docker build -t nginx-ubuntu .
 ```
-![build](images-14.png)
+![build](images/images-14.png)
 
 ### 4. Run Container 
 
@@ -237,7 +237,7 @@ docker build -t nginx-ubuntu .
 docker run -d --name nginx-ubuntu -p 8081:80 nginx-ubuntu
 ```
 
-![runing](images-15.png)
+![runing](images/images-15.png)
 
 
 ## KEY OBSERVATIONS
@@ -250,7 +250,7 @@ docker images | grep nginx
   - Extremely small image
   - Fewer packages
   - Faster pull and startup time
-![size](images-16.png)
+![size](images/images-16.png)
 
 ## Part 4 : Image size and Comparison
 
@@ -278,7 +278,7 @@ docker history nginx-ubuntu
 docker history nginx-alpine
 ```
 
-![inspect](images-17.png)
+![inspect](images/images-17.png)
 
 ### Observations:
 
@@ -316,7 +316,7 @@ docker run -d \
   -v $(pwd)/html:/usr/share/nginx/html \
   nginx
 ```
-![merge](images-18.png)
+![merge](images/images-18.png)
 
 
 
@@ -324,7 +324,7 @@ docker run -d \
 - Search this on web browser<br>
 `http://localhost:8083`
 
-![browser](images-19.png)
+![browser](images/images-19.png)
 
 
 
