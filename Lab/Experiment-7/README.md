@@ -63,7 +63,7 @@ Developer → GitHub → Webhook → Jenkins → Build → Docker Hub
 
 - docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword
 - Install all required plugins 
-![unlock](./images/Unlock%20Jenkins.png)
+![unlock](./images/unlock%20Jenkins.png)
 - Optional : To access your Jenkins from another device you need to make it public hence you can get a public ip from npm local tunnel and Configure your Jenkins.
 ![configure](./images/externalaccess.png)
 
@@ -75,7 +75,7 @@ Developer → GitHub → Webhook → Jenkins → Build → Docker Hub
 Create a repository on GitHub named and clone it in your system by pasting its url on your terminal :
 _my-app_
 
-![gitmyapp](./lab7images/1.1.png)
+![gitmyapp](./lab7image/1.1.png)
 
 ---
 
@@ -188,7 +188,7 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "lakshitadixit5/myapp"
+        IMAGE_NAME = "vikrantrana5/myapp"
     }
 
     stages {
