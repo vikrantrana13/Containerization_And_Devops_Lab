@@ -1,333 +1,219 @@
+# CI/CD Pipeline using Jenkins, GitHub & Docker Hub
+---
 
-## EXPERIMENT 7 : CI/CD Pipeline Setup using GitHub, Docker, and Jenkins
-The objective of this project is to design and implement a complete CI/CD (Continuous Integration and Continuous Deployment) pipeline using GitHub, Docker, and Jenkins. This pipeline automates code integration, Docker image building, and pushing images to Docker Hub.
+#  Aim
 
-## Objectives
-
-- Understand CI/CD workflow using Jenkins (GUI-based tool)  
-- Create a structured GitHub repository with application + Jenkinsfile  
-- Build Docker images from source code  
-- Securely store Docker Hub credentials in Jenkins  
-- Automate build & push process using webhook triggers  
-- Use same host (Docker) as Jenkins agent  
-
-## Theory
-
-### What is Jenkins?
-Jenkins is a web-based GUI automation server used to:
-- Build applications  
-- Test code  
-- Deploy software  
-
-It provides:
-- Dashboard (browser-based UI)  
-- Plugin ecosystem (GitHub, Docker, etc.)  
-- Pipeline as Code using Jenkinsfile  
+To design and implement a complete CI/CD pipeline using Jenkins by integrating GitHub and Docker Hub.
 
 ---
 
-### What is CI/CD?
+#  Objectives
 
-**Continuous Integration (CI):**
-- Code is automatically built and tested after each commit  
-
-**Continuous Deployment (CD):**
-- Built artifacts (Docker images) are automatically delivered/deployed  
-
----
-
-### Workflow Overview
-Developer → GitHub → Webhook → Jenkins → Build → Docker Hub  
+* Understand CI/CD workflow
+* Automate build and deployment
+* Integrate GitHub, Jenkins, and Docker Hub
+* Use Webhooks for automation
 
 ---
 
-### Prerequisites
-- Docker & Docker Compose installed  
-- GitHub account  
-- Docker Hub account  
-- Basic Linux command knowledge  
+#  Tools Used
 
-
-
-### STEP 1: Create docker compose file
-
-![dockercomposefile](./images/docker-composeJenkinsfile.png)
-
-### STEP 2: Start Jenkins
-
-- Access local host 
-
-![access host](./images/localhost.png)
-
-### STEP 3 : Unlock Jenkins 
-
-- docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword
-- Install all required plugins 
-![unlock](./images/unlock%20Jenkins.png)
-- Optional : To access your Jenkins from another device you need to make it public hence you can get a public ip from npm local tunnel and Configure your Jenkins.
-![configure](./images/externalaccess.png)
+* Jenkins
+* GitHub
+* Docker
+* Docker Hub
+* Flask
 
 ---
 
-## Part A: GitHub Repository Setup (Source Code + Build Definition)
+#  Project Structure
 
-### 5.1 Create Repository
-Create a repository on GitHub named and clone it in your system by pasting its url on your terminal :
-_my-app_
-
-![gitmyapp](./lab7image/1.1.png)
-
----
-
-### 5.2 Project Structure
+```
 my-app/
 ├── app.py
 ├── requirements.txt
 ├── Dockerfile
 ├── Jenkinsfile
- ![repostructure](./lab7images/1.2.png)
-
+```
 
 ---
 
-### 5.3 Application Code
+#  Step-by-Step Implementation
 
-#### app.py
+---
+
+##  Step 1: Create Project in VS Code
+
+* Created folder `my-app`
+* Added files:
+
+  * `app.py`
+  * `requirements.txt`
+  * `Dockerfile`
+  * `Jenkinsfile`
+
+![images for exp 7](./images/1.png)
+
+---
+
+##  Step 2: Write Application Code
+
 ```python
 from flask import Flask
 app = Flask(__name__)
 
 @app.route("/")
 def home():
-    return "Hello from CI/CD Pipeline!"
-    # return "Hello from CI/CD Pipeline!, my sapid is 123456"
+    return "Hello from CI/CD  Pipeline!"
 
-app.run(host="0.0.0.0", port=80)
+if __name__=="__main__":
+    app.run(host="0.0.0.0", port=80)
 ```
 
-![2](./lab7images/2.png)
 
 ---
 
-#### requirements.txt
-```flask```
+##  Step 3: Create GitHub Repository
 
----
+* Created repo: `my-app`
+* Pushed code using Git commands
 
-### 5.4 Dockerfile (Build Process)
-
-#### Dockerfile
-```dockerfile
-FROM python:3.10-slim
-
-WORKDIR /app
-COPY . .
-
-RUN pip install -r requirements.txt
-
-EXPOSE 80
-CMD ["python", "app.py"]
-```
----
-
-### Build Process Explanation
-1. Developer pushes source code to GitHub
-2. Jenkins pulls the latest code
-3. Dockerfile:
-   - Creates environment
-   - Installs dependencies
-   - Packages application
-4. Output → Docker Image
-
----
-
-### 5.5 Jenkinsfile (Pipeline Definition)
 ```bash
-pipeline {
-    agent any
-
-    environment {
-        IMAGE_NAME = "your-dockerhub-username/myapp"
-    }
-
-    stages {
-
-        stage('Clone Source') {
-            steps {
-                git 'https://github.com/your-username/my-app.git'
-            }
-        }
-
-        stage('Build Docker Image') {
-            steps {
-                sh 'docker build -t $IMAGE_NAME:latest .'
-            }
-        }
-
-        stage('Login to Docker Hub') {
-            steps {
-                withCredentials([string(credentialsId: 'dockerhub-token', variable: 'DOCKER_TOKEN')]) {
-                    sh 'echo $DOCKER_TOKEN | docker login -u your-dockerhub-username --password-stdin'
-                }
-            }
-        }
-
-        stage('Push to Docker Hub') {
-            steps {
-                sh 'docker push $IMAGE_NAME:latest'
-            }
-        }
-    }
-}
+git init
+git add .
+git commit -m "initial commit"
+git push
 ```
 
-## Refer to this example to know where to make chaneges
-
-```groovy
-pipeline {
-    agent any
-
-    environment {
-        IMAGE_NAME = "vikrantrana5/myapp"
-    }
-
-    stages {
-
-        stage('Clone Source') {
-            steps {
-                git branch: 'main', url: 'https://github.com/vikrantrana_13/my-app.git'
-            }
-        }
-
-        stage('Build Docker Image') {
-            steps {
-                sh 'docker build -t $IMAGE_NAME:latest .'
-            }
-        }
-
-        stage('Login to Docker Hub') {
-            steps {
-                withCredentials([string(credentialsId: 'dockerhub-token', variable: 'DOCKER_TOKEN')]) {
-                    sh 'echo $DOCKER_TOKEN | docker login -u vikrantrana5 --password-stdin'
-                }
-            }
-        }
-
-        stage('Push to Docker Hub') {
-            steps {
-                sh 'docker push $IMAGE_NAME:latest'
-            }
-        }
-    }
-}
-```
----
-
-## Part B: Jenkins Setup using Docker (Persistent Configuration)
-
-### 6.1 Create Docker Compose File
-
-version: '3.8'
-
-services:
-  jenkins:
-    image: jenkins/jenkins:lts
-    container_name: jenkins
-    restart: always
-    ports:
-      - "8080:8080"
-      - "50000:50000"
-    volumes:
-      - jenkins_home:/var/jenkins_home
-      - /var/run/docker.sock:/var/run/docker.sock
-    user: root
-
-volumes:
-  jenkins_home:
+![images for exp 7](./images/2.png)
 
 ---
 
-### 6.2 Start Jenkins
+## Step 4: Setup Jenkins using Docker
+
+* Created `docker-compose.yml`
+* Started Jenkins container
+
+```bash
 docker-compose up -d
+```
 
-Access:
-http://localhost:8080
+* Accessed Jenkins at:
+  `http://localhost:8080`
+
+![images for exp 7](./images/3.png)
+![images for exp 7](./images/4.png)
+![images for exp 7](./images/5.png)
+![images for exp 7](./images/6.png)
+![images for exp 7](./images/7.png)
+---
+
+## Step 5: Configure Jenkins
+
+### ➤ Add Credentials
+
+* Added Docker Hub token
+* ID: `dockerhub-token`
+![images for exp 7](./images/8.png)
+![images for exp 7](./images/9.png)
+![images for exp 7](./images/10.png)
+
+
+### ➤ Create Pipeline Job
+
+* Selected: **Pipeline script from SCM**
+* Repo URL: `https://github.com/vikrantrana13/my-app.git`
+* Script Path: `Jenkinsfile`
+
+![images for exp 7](./images/11.png)
+![images for exp 7](./images/12.png)
 
 ---
 
-### 6.3 Unlock Jenkins
-docker exec -it jenkins cat /var/jenkins_home/secrets/initialAdminPassword
+##  Step 6: Setup Webhook
+
+* Added webhook in GitHub
+* Payload URL:
+
+```
+https://your-ngrok-url/github-webhook/
+```
+
+* Enabled push events
+
+![images for exp 7](./images/13.png)
 
 ---
 
-### 6.4 Initial Setup
-- Install suggested plugins
-- Create admin user
+##  Step 7: Execute Pipeline
+
+* Pushed code to GitHub
+* Jenkins triggered automatically
+
+### Stages executed:
+
+* Clone Source
+* Build Docker Image
+* Login to Docker Hub
+* Push Image
+
+![images for exp 7](./images/14.png)
 
 ---
 
-## Part C: Jenkins Configuration
+## Step 8: Verify on Docker Hub
 
-### 7.1 Add Docker Hub Credentials
-Path:
-Manage Jenkins → Credentials → Add Credentials
-
-Type: Secret Text  
-ID: dockerhub-token  
-Value: Docker Hub Access Token  
+* Image: `vikrantrana13/myapp`
+* Tag: `latest`
+![images for exp 7](./images/15.png)
 
 ---
 
-### 7.2 Create Pipeline Job
-New Item → Pipeline  
-Name: ci-cd-pipeline  
+## Step 9: Run Docker Container
 
-Configure:
-- Pipeline script from SCM  
-- SCM: Git  
-- Repo URL: your GitHub repo  
-- Script Path: Jenkinsfile  
+```bash
+docker run -d -p 8081:80 vikrantrana13/myapp
+```
 
----
+Open:
 
-## Complete CI/CD Flow
-1. Code is pushed to GitHub
-2. Jenkins pipeline is triggered
-3. Jenkins:
-   - Clones repository
-   - Builds Docker image
-   - Logs into Docker Hub
-   - Pushes image
-4. Final Output:
-   Docker image ready for deployment anywhere
+```
+http://localhost:8081
+```
+![images for exp 7](./images/16.png)
 
 ---
 
-## Observations
-- Automation reduces manual effort
-- Docker ensures consistent environments
-- Jenkins integrates well with GitHub
-- Pipeline execution is fast and repeatable
+#  Workflow Diagram
+
+```
+Developer → GitHub → Webhook → Jenkins → Docker → Docker Hub
+```
 
 ---
 
-## Problems Faced
-- Docker permission issues inside Jenkins container
-- Docker Hub authentication errors
-- Incorrect credentials configuration
-- Port conflicts
-- Initial difficulty with Jenkins pipeline syntax
+#  Observations
+
+* Automation reduces manual work
+* Jenkins simplifies pipeline creation
+* Docker ensures consistency
+* Webhook enables real-time triggering
 
 ---
 
-## Learning Outcomes
-- Learned CI/CD pipeline concepts
-- Understood Docker containerization
-- Gained experience with Jenkins pipelines
-- Learned secure credential management
-- Understood end-to-end DevOps workflow
+# Result
+
+Successfully implemented a CI/CD pipeline where:
+
+* Code push triggers Jenkins automatically
+* Docker image is built and pushed
+* Full automation achieved
 
 ---
 
-## Conclusion
-This project demonstrates a complete CI/CD pipeline using GitHub, Docker, and Jenkins, showing how automation improves efficiency, reliability, and scalability in modern software development.
+
+# Conclusion
+
+This experiment demonstrates how modern DevOps tools can automate software development and deployment efficiently.
+
+---
