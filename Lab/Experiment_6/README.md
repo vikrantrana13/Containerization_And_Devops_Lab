@@ -149,8 +149,8 @@ Stop and remove:
 docker stop lab-nginx
 docker rm lab-nginx
 ```
-![images for exp 6](./images/image1.jpeg)
-![images for exp 6](./images/image2.jpeg)
+![images for exp 6](./images/1.png)
+![images for exp 6](./images/2.png)
 ---
 
 ### Using Docker Compose
@@ -167,7 +167,7 @@ services:
     volumes:
       - ./html:/usr/share/nginx/html
 ```
-![images for exp 6](./images/image3.jpeg)
+![images for exp 6](./images/3.png)
 
 Run:
 
@@ -198,7 +198,7 @@ Create network:
 ```bash
 docker network create wp-net
 ```
-![images for exp 6](./images/image4.jpeg)
+![images for exp 6](./images/4.png)
 Run MySQL:
 
 ```bash
@@ -224,13 +224,13 @@ docker run -d \
   -e WORDPRESS_DB_NAME=wordpress \
   wordpress:latest
 ```
-![images for exp 6](./images/image5.jpeg)
+![images for exp 6](./images/5.png)
 
 Access:
 
 http://localhost:8082
 
-![images for exp 6](./images/image6.jpeg)
+![images for exp 6](./images/6.png)
 
 ---
 
@@ -261,7 +261,7 @@ services:
 volumes:
   mysql_data:
 ```
-![images for exp 6](./images/image7.jpeg)
+![images for exp 6](./images/7.png)
 
 Run:
 
@@ -274,7 +274,7 @@ Stop:
 ```bash
 docker compose down -v
 ```
-![images for exp 6](./images/image8.jpeg)
+![images for exp 6](./images/8.png)
 ---
 
 # PART C – CONVERSION & RESOURCE TASKS
@@ -294,7 +294,7 @@ docker run -d \
   --restart unless-stopped \
   node:18-alpine
 ```
-![images for exp 6](./images/image10.jpeg)
+![images for exp 6](./images/10.png)
 
 Compose equivalent:
 
@@ -312,7 +312,7 @@ services:
       DEBUG: "false"
     restart: unless-stopped
 ```
-![images for exp 6](./images/image9.jpeg)
+![images for exp 6](./images/9.png)
 ---
 
 ## Task 4: Resource Limits Conversion
@@ -347,7 +347,7 @@ services:
           memory: 256m
           cpus: '0.5'
 ```
-![images for exp 6](./images/image12.jpeg)
+![images for exp 6](./images/10.png)
 
 Note:  
 The `deploy` section works only in Docker Swarm mode.
@@ -369,7 +369,7 @@ http.createServer((req, res) => {
   res.end("Docker Compose Build Lab");
 }).listen(3000);
 ```
-![images for exp 6](./images/image14.jpeg)
+![images for exp 6](./images/11.png)
 
 ### Dockerfile
 
@@ -382,7 +382,7 @@ EXPOSE 3000
 
 CMD ["node", "app.js"]
 ```
-![images for exp 6](./images/image15.jpeg)
+![images for exp 6](./images/12.png)
 
 ### docker-compose.yml
 
@@ -398,14 +398,14 @@ services:
     ports:
       - "3000:3000"
 ```
-![images for exp 6](./images/image16.jpeg)
+![images for exp 6](./images/13.png)
 
 Run:
 
 ```bash
 docker compose up --build -d
 ```
-![images for exp 6](./images/image17.jpeg)
+![images for exp 6](./images/14.png)
 ---
 
 ## Difference Between image and build
@@ -431,7 +431,7 @@ COPY --from=builder /app/app.js .
 EXPOSE 3000
 CMD ["node", "app.js"]
 ```
-![images for exp 6](./images/image18.jpeg)
+![images for exp 6](./images/15.png)
 
 Compose configuration:
 
@@ -448,8 +448,8 @@ services:
     environment:
       NODE_ENV: production
 ```
-![images for exp 6](./images/image19.jpeg)
-![images for exp 6](./images/image20.jpeg)
+![images for exp 6](./images/16.png)
+![images for exp 6](./images/17.png)
 ![images for exp 6](./images/image21.jpeg)
 ---
 
