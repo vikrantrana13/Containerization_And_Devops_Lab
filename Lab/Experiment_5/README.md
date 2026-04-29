@@ -34,8 +34,8 @@ docker rm test-container
 docker run -it --name test-container ubuntu /bin/bash
 cat message.txt
 ```
-![images for exp 5](./images/image1.jpeg)
-![images for exp 5](./images/image2.jpeg)
+![images for exp 5](./images/1.png)
+![images for exp 5](./images/2.png)
 File does not exist — Data is lost.
 
 
@@ -48,7 +48,7 @@ docker run -d -v /app/data --name web1 nginx
 docker volume ls
 docker inspect web1 | grep -A 5 Mounts
 ```
-![images for exp 5](./images/image3.jpeg)
+![images for exp 5](./images/3.png)
 ---
 
 ## 2. Named Volumes
@@ -59,7 +59,7 @@ docker run -d -v mydata:/app/data --name web2 nginx
 docker volume ls
 docker volume inspect mydata
 ```
-![images for exp 5](./images/image4.jpeg)
+![images for exp 5](./images/4.png)
 ---
 
 ## 3. Bind Mounts (Host Directory)
@@ -70,7 +70,7 @@ docker run -d -v ~/myapp-data:/app/data --name web3 nginx
 echo "From Host" > ~/myapp-data/host-file.txt
 docker exec web3 cat /app/data/host-file.txt
 ```
-![images for exp 5](./images/image5.jpeg)
+![images for exp 5](./images/5.png)
 
 ---
 
@@ -95,7 +95,7 @@ docker run -d \
   mysql:8.0
 ```
 
-![images for exp 5](./images/image6.jpeg)
+![images for exp 5](./images/6.png)
 
 ---
 
@@ -121,7 +121,7 @@ docker run -d \
 curl http://localhost:8080
 ```
 
-![images for exp 5](./images/image7.jpeg)
+![images for exp 5](./images/7.png)
 
 ---
 
@@ -165,7 +165,7 @@ docker run -d \
   my-app
 ```
 
-![images for exp 5](./images/image8.jpeg)
+![images for exp 5](./images/8.png)
 
 ---
 
@@ -241,7 +241,7 @@ docker logs --tail 100 container-name
 docker inspect container-name
 docker events
 ```
-![images for exp 5](./images/image9.jpeg)
+![images for exp 5](./images/9.png)
 ---
 
 #  Part 4: Docker Networks
@@ -273,7 +273,7 @@ docker run -d --name host-app --network host nginx
 curl http://localhost
 ```
 
-![images for exp 5](./images/image10.jpeg)
+![images for exp 5](./images/10.png)
 ---
 
 #  Part 5: Complete Real-World Example
@@ -319,17 +319,17 @@ docker run -d \
   --env-file .env.production \
   flask-app:latest
 ```
-![images for exp 5](./images/image11.jpeg)
+![images for exp 5](./images/11.png)
 
-![images for exp 5](./images/image12.jpeg)
+![images for exp 5](./images/12.png)
 
-![images for exp 5](./images/image13.jpeg)
+![images for exp 5](./images/13.png)
 
-![images for exp 5](./images/image14.jpeg)
+![images for exp 5](./images/14.png)
 
-![images for exp 5](./images/image15.jpeg)
+![images for exp 5](./images/15.png)
 
-![images for exp 5](./images/image16.jpeg)
+![images for exp 5](./images/18.png)
 ---
 
 #  Key Takeaways
