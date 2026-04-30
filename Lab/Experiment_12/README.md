@@ -1,61 +1,46 @@
-# Experiment 10: SonarQube — Static Code Analysis
+# Experiment 12: Study and Analyse Container Orchestration using Kubernetes
 
 ---
 
 ##  Objective
 
-To understand and implement static code analysis using SonarQube for detecting bugs, vulnerabilities, and code smells in a Java application.
+To understand Kubernetes concepts and perform deployment, scaling, and self-healing of applications using `kubectl`.
 
 ---
 
-##  Theory
+## Theory
 
-### What is SonarQube?
+### What is Kubernetes?
 
-SonarQube is an open-source platform used for **static code analysis**. It scans source code without executing it and identifies:
-
-* Bugs 
-* Security Vulnerabilities 
-* Code Smells 
+Kubernetes is an open-source container orchestration platform used to automate deployment, scaling, and management of containerized applications.
 
 ---
 
-###  Key Features
+###  Why Kubernetes?
 
-* Automated code scanning
-* Quality Gates for pass/fail criteria
-* Tracks technical debt
-* Supports multiple languages
-* Provides visual dashboard
-
----
-
-###  Key Terms
-
-| Term           | Description          |
-| -------------- | -------------------- |
-| Bug            | Code that may fail   |
-| Vulnerability  | Security weakness    |
-| Code Smell     | Poor coding practice |
-| Quality Gate   | Pass/Fail criteria   |
-| Technical Debt | Effort to fix issues |
+* Industry standard for orchestration
+* Supports automatic scaling
+* Provides self-healing
+* Works across cloud platforms
 
 ---
 
-##  Architecture
+###  Core Concepts
 
-* **SonarQube Server** → analyzes and displays results
-* **Scanner (Maven/CLI)** → sends code for analysis
-* **Database (PostgreSQL)** → stores results
+| Docker Concept | Kubernetes Equivalent | Description                 |
+| -------------- | --------------------- | --------------------------- |
+| Container      | Pod                   | Smallest unit in Kubernetes |
+| Service        | Service               | Exposes application         |
+| Compose        | Deployment            | Manages pods                |
+| Scaling        | ReplicaSet            | Maintains desired pod count |
 
 ---
 
 ##  Tools Used
 
-* Docker & Docker Compose
-* SonarQube
-* Maven
-* Java
+* kubectl
+* Kubernetes cluster (k3d / Minikube)
+* macOS Terminal
 
 ---
 
@@ -63,196 +48,176 @@ SonarQube is an open-source platform used for **static code analysis**. It scans
 
 ---
 
-###  Step 1: Create Project Directory
+###  Step 1: Verify Cluster
 
 ```bash
-mkdir sonarqube-lab
-cd sonarqube-lab
+kubectl get nodes
 ```
-
+![images for exp 12](./images/1.png)
 ---
 
-###  Step 2: Create docker-compose.yml
+###  Step 2: Create Deployment File
+
+```bash
+nano wordpress-deployment.yaml
+```
 
 ```yaml
-version: '3.8'
-
-services:
-  sonar-db:
-    image: postgres:13
-    environment:
-      POSTGRES_USER: sonar
-      POSTGRES_PASSWORD: sonar
-      POSTGRES_DB: sonarqube
-      POSTGRES_HOST_AUTH_METHOD: trust
-
-  sonarqube:
-    image: sonarqube:lts-community
-    ports:
-      - "9001:9000"
-    environment:
-      SONAR_JDBC_URL: jdbc:postgresql://sonar-db:5432/sonarqube
-      SONAR_JDBC_USERNAME: sonar
-      SONAR_JDBC_PASSWORD: sonar
-    depends_on:
-      - sonar-db
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: wordpress
+  template:
+    metadata:
+      labels:
+        app: wordpress
+    spec:
+      containers:
+      - name: wordpress
+        image: wordpress:latest
+        ports:
+        - containerPort: 80
 ```
 
 ---
 
-###  Step 3: Start SonarQube Server
+### Step 3: Apply Deployment
 
 ```bash
-docker-compose up -d
-docker-compose logs -f sonarqube
+kubectl apply -f wordpress-deployment.yaml
 ```
-
-Wait until:
-
-```
-SonarQube is operational
-```
-![images for exp 10](./images/1.png)
+![images for exp 12](./images/2.png)
 ---
 
-###  Step 4: Open Dashboard
-
-Open in browser:
-
-```
-http://localhost:9001
-```
-
-Login:
-
-* Username: admin
-* Password: admin
-![images for exp 10](./images/2.png)
----
-
-###  Step 5: Generate Token
-
-* Go to **My Account → Security**
-* Generate token
-* Copy token
-![images for exp 10](./images/3.png)
----
-
-###  Step 6: Create Sample Java Project
+###  Step 4: Verify Pods
 
 ```bash
-mkdir sample-java-app
-cd sample-java-app
-mkdir -p src/main/java/com/example
+kubectl get pods
 ```
-![images for exp 10](./images/4.png)
+![images for exp 12](./images/3.png)
 ---
 
-###  Step 7: Create Java File
-
-```java
-package com.example;
-
-public class Calculator {
-
-    public int divide(int a, int b) {
-        return a / b;
-    }
-
-    public int add(int a, int b) {
-        int result = a + b;
-        int unused = 100;
-        return result;
-    }
-
-    public String getUser(String userId) {
-        return "SELECT * FROM users WHERE id = " + userId;
-    }
-
-    public String getName(String name) {
-        return name.toUpperCase();
-    }
-}
-```
-
----
-
-###  Step 8: Create pom.xml
-
-```xml
-<project xmlns="http://maven.apache.org/POM/4.0.0">
-  <modelVersion>4.0.0</modelVersion>
-
-  <groupId>com.example</groupId>
-  <artifactId>sample-app</artifactId>
-  <version>1.0-SNAPSHOT</version>
-
-  <properties>
-    <sonar.projectKey>sample-java-app</sonar.projectKey>
-    <sonar.host.url>http://localhost:9001</sonar.host.url>
-    <sonar.login>YOUR_TOKEN</sonar.login>
-  </properties>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.sonarsource.scanner.maven</groupId>
-        <artifactId>sonar-maven-plugin</artifactId>
-        <version>3.9.1.2184</version>
-      </plugin>
-    </plugins>
-  </build>
-</project>
-```
-
----
-
-###  Step 9: Run Analysis
+### Step 5: Create Service File
 
 ```bash
-mvn clean verify sonar:sonar
+nano wordpress-service.yaml
 ```
-![images for exp 10](./images/5.png)
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: wordpress-service
+spec:
+  type: NodePort
+  selector:
+    app: wordpress
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 30007
+```
+
 ---
 
-###  Step 10: View Results
+###  Step 6: Apply Service
+
+```bash
+kubectl apply -f wordpress-service.yaml
+```
+![images for exp 12](./images/4.png)
+---
+
+###  Step 7: Verify Service
+
+```bash
+kubectl get svc
+```
+![images for exp 12](./images/5.png)
+---
+
+###  Step 8: Access Application
+
+```bash
+kubectl port-forward service/wordpress-service 8082:80
+```
 
 Open:
 
 ```
-http://localhost:9001
+http://localhost:8082
 ```
-
-Select project: **sample-java-app**
-![images for exp 10](./images/6.png)
-![images for exp 10](./images/7.png)
-![images for exp 10](./images/10.png)
-![images for exp 10](./images/11.png)
-![images for exp 10](./images/12.png)
-![images for exp 10](./images/13.png)
-![images for exp 10](./images/14.png)
+![images for exp 12](./images/6.png)
 
 ---
 
-##  Expected Output
+###  Step 9: Scale Deployment
 
-* Bugs detected
-* Vulnerabilities identified
-* Code smells reported
-* Quality Gate status displayed
+```bash
+kubectl scale deployment wordpress --replicas=4
+```
 
+---
+
+###  Step 10: Verify Scaling
+
+```bash
+kubectl get pods
+```
+![images for exp 12](./images/7.png)
+---
+
+###  Step 11: Test Self-Healing
+
+```bash
+kubectl get pods
+kubectl delete pod <pod-name>
+kubectl get pods
+```
+![images for exp 12](./images/8.png)
+---
+
+###  Step 12: Cleanup
+
+```bash
+kubectl delete -f wordpress-deployment.yaml
+kubectl delete -f wordpress-service.yaml
+```
+![images for exp 12](./images/9.png)
 ---
 
 ##  Result
 
-SonarQube successfully analyzed the Java application and detected multiple issues, demonstrating the effectiveness of static code analysis.
+* Deployment created successfully
+* Service exposed the application
+* Scaling increased pods from 2 to 4
+* Kubernetes automatically recreated deleted pods
 
 ---
 
 ##  Conclusion
 
-SonarQube improves code quality by identifying errors early in development. It helps maintain secure, clean, and maintainable code through automated analysis.
+Kubernetes simplifies container orchestration by providing automated deployment, scaling, and self-healing capabilities, making it a powerful tool for modern applications.
+
+---
+
+##  Key Takeaways
+
+* Deployment manages pods
+* Service exposes applications
+* Scaling improves performance
+* Self-healing ensures reliability
 
 ---
 
 
+##  Key Learning
+
+> Kubernetes ensures desired state by automatically managing containers, scaling applications, and recovering from failures.
+
+---
